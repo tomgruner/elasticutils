@@ -150,16 +150,10 @@ class S(BaseS):
         """Create and return an S.
 
         :arg mapping_type: class; the mapping type that this S is
-            based on
-
-        .. Note::
-
-           The :py:class:`elasticutils.S` doesn't require the
-           `mapping_type` argument, but the
-           :py:class:`elasticutils.contrib.django.S` does.
+            based on, if required to limit search to one index or doctype
 
         """
-        return super(S, self).__init__(mapping_type)
+        return super(S, self).__init__(type_=mapping_type)
 
     def get_es(self, default_builder=get_es):
         """Returns the elasticsearch Elasticsearch object to use.
@@ -174,18 +168,26 @@ class S(BaseS):
         """Returns the list of indexes to act on based on ES_INDEXES setting
 
         """
-        doctype = self.type.get_mapping_type_name()
-        indexes = (settings.ES_INDEXES.get(doctype) or
-                   settings.ES_INDEXES['default'])
+        if self.type is not None:
+            doctype = self.type.get_mapping_type_name()
+            indexes = (settings.ES_INDEXES.get(doctype) or
+                       settings.ES_INDEXES['default'])
+        else:
+            indexes = settings.ES_INDEXES['default']
+
         if isinstance(indexes, basestring):
             indexes = [indexes]
         return super(S, self).get_indexes(default_indexes=indexes)
 
     def get_doctypes(self, default_doctypes=None):
         """Returns the doctypes (or mapping type names) to use."""
-        doctypes = self.type.get_mapping_type_name()
-        if isinstance(doctypes, basestring):
-            doctypes = [doctypes]
+        if self.type is not None:
+            doctypes = self.type.get_mapping_type_name()
+            if isinstance(doctypes, basestring):
+                doctypes = [doctypes]
+        else:
+            doctypes = default_doctypes
+            
         return super(S, self).get_doctypes(default_doctypes=doctypes)
 
 
