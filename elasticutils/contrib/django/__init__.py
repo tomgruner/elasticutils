@@ -146,7 +146,7 @@ es_required_or_50x = decorator_from_middleware_with_args(
 
 class S(BaseS):
     """S that's based on Django settings"""
-    def __init__(self, mapping_type):
+    def __init__(self, mapping_type=None):
         """Create and return an S.
 
         :arg mapping_type: class; the mapping type that this S is
