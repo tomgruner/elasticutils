@@ -149,7 +149,7 @@ class S(BaseS):
     def __init__(self, mapping_type=None):
         """Create and return an S.
 
-        :arg type_: class; the mapping type that this S is
+        :arg mapping_type: class; the mapping type that this S is
             based on, if required to limit search to one index or doctype
 
         """
